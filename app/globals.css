@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #1A0F25;
+  --foreground: #F5F5F5;
+  --arcane-copper: #B87333;
+  --arcane-rust: #A0522D;
+  --arcane-neon-green: #39FF14;
+  --arcane-neon-blue: #00D9FF;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1A0F25;
+    --foreground: #F5F5F5;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: linear-gradient(to bottom, var(--background), #2D1B3D);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px var(--arcane-neon-green),
+                 0 0 20px var(--arcane-neon-green),
+                 0 0 30px var(--arcane-neon-green);
+  }
+
+  .glow-border {
+    box-shadow: 0 0 10px var(--arcane-neon-green),
+                0 0 20px var(--arcane-neon-green),
+                inset 0 0 10px var(--arcane-neon-green);
+  }
+
+  .oxidized-bg {
+    background: linear-gradient(135deg, #CD853F 0%, #A0522D 100%);
+  }
+}
+
+/* Animaciones personalizadas */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 3s infinite;
+  background: linear-gradient(
+    to right,
+    #B87333 0%,
+    #39FF14 50%,
+    #B87333 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Scrollbar personalizado estilo Arcane */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2D1B3D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B87333;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #CD853F;
+}
