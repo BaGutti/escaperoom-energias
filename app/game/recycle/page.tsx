@@ -25,27 +25,43 @@ interface Container {
 }
 
 const itemTemplates = [
-  // Plástico
+  // Plástico - 6 items
   { name: "Botella PET", type: 'plastico' as const, icon: "🍼", category: 'reciclar' as const },
   { name: "Bolsa Plástica", type: 'plastico' as const, icon: "🛍️", category: 'reducir' as const },
   { name: "Envase Yogurt", type: 'plastico' as const, icon: "🥤", category: 'reutilizar' as const },
+  { name: "Botella Shampoo", type: 'plastico' as const, icon: "🧴", category: 'reciclar' as const },
+  { name: "Tapa Plástico", type: 'plastico' as const, icon: "🎯", category: 'reciclar' as const },
+  { name: "Bandeja Comida", type: 'plastico' as const, icon: "🍱", category: 'reducir' as const },
 
-  // Vidrio
+  // Vidrio - 5 items
   { name: "Botella Vidrio", type: 'vidrio' as const, icon: "🍾", category: 'reciclar' as const },
   { name: "Frasco", type: 'vidrio' as const, icon: "🫙", category: 'reutilizar' as const },
+  { name: "Vaso Roto", type: 'vidrio' as const, icon: "🥃", category: 'reciclar' as const },
+  { name: "Botella Vino", type: 'vidrio' as const, icon: "🍷", category: 'reciclar' as const },
+  { name: "Frasco Mermelada", type: 'vidrio' as const, icon: "🍯", category: 'reutilizar' as const },
 
-  // Papel
+  // Papel - 6 items
   { name: "Periódico", type: 'papel' as const, icon: "📰", category: 'reciclar' as const },
   { name: "Caja Cartón", type: 'papel' as const, icon: "📦", category: 'reutilizar' as const },
   { name: "Papel Sucio", type: 'papel' as const, icon: "🧻", category: 'reducir' as const },
+  { name: "Revista", type: 'papel' as const, icon: "📖", category: 'reciclar' as const },
+  { name: "Sobre", type: 'papel' as const, icon: "✉️", category: 'reciclar' as const },
+  { name: "Cartón Pizza", type: 'papel' as const, icon: "🍕", category: 'reducir' as const },
 
-  // Metal
+  // Metal - 5 items
   { name: "Lata Aluminio", type: 'metal' as const, icon: "🥫", category: 'reciclar' as const },
   { name: "Tapas Metal", type: 'metal' as const, icon: "⚙️", category: 'reutilizar' as const },
+  { name: "Lata Refresco", type: 'metal' as const, icon: "🥤", category: 'reciclar' as const },
+  { name: "Alambre", type: 'metal' as const, icon: "📎", category: 'reciclar' as const },
+  { name: "Lata Conserva", type: 'metal' as const, icon: "🥘", category: 'reutilizar' as const },
 
-  // Orgánico
+  // Orgánico - 6 items
   { name: "Cáscara Fruta", type: 'organico' as const, icon: "🍌", category: 'reciclar' as const },
   { name: "Restos Comida", type: 'organico' as const, icon: "🥗", category: 'reducir' as const },
+  { name: "Hojas Secas", type: 'organico' as const, icon: "🍂", category: 'reciclar' as const },
+  { name: "Cáscara Huevo", type: 'organico' as const, icon: "🥚", category: 'reciclar' as const },
+  { name: "Restos Café", type: 'organico' as const, icon: "☕", category: 'reciclar' as const },
+  { name: "Verduras Podridas", type: 'organico' as const, icon: "🥬", category: 'reducir' as const },
 ];
 
 const containers: Container[] = [
@@ -76,8 +92,9 @@ export default function RecyclePage() {
   const spawnItem = useCallback(() => {
     if (isPaused || isGameOver) return;
 
-    // Limitar items simultáneos para no abrumar
-    if (items.length >= 5) return;
+    // Limitar items simultáneos progresivamente según dificultad
+    const maxItems = difficulty <= 2 ? 5 : difficulty <= 4 ? 7 : difficulty <= 6 ? 9 : 12;
+    if (items.length >= maxItems) return;
 
     const template = itemTemplates[Math.floor(Math.random() * itemTemplates.length)];
     const newItem: FallingItem = {
@@ -88,7 +105,7 @@ export default function RecyclePage() {
       category: template.category,
       x: Math.random() * 80 + 10, // Entre 10% y 90%
       y: 0,
-      speed: 0.25 + (difficulty * 0.1), // Velocidad más lenta
+      speed: 0.3 + (difficulty * 0.15), // Velocidad más agresiva: 0.45 → 1.35
     };
 
     setItems(prev => [...prev, newItem]);
@@ -104,7 +121,7 @@ export default function RecyclePage() {
 
     const spawnInterval = setInterval(() => {
       spawnItem();
-    }, 3500 - (difficulty * 150)); // Spawn más espaciado, incremento gradual
+    }, Math.max(1500, 3200 - (difficulty * 250))); // Spawn mucho más agresivo: 2950ms → 1500ms (mínimo)
 
     return () => {
       clearInterval(timerInterval);
@@ -138,11 +155,11 @@ export default function RecyclePage() {
     return () => clearInterval(moveInterval);
   }, [isGameOver, isPaused]);
 
-  // Aumentar dificultad cada 45 segundos
+  // Aumentar dificultad cada 30 segundos (más frecuente)
   useEffect(() => {
-    if (timer > 0 && timer % 45 === 0 && difficulty < 5) {
+    if (timer > 0 && timer % 30 === 0 && difficulty < 8) {
       setDifficulty(prev => prev + 1);
-      setFeedback({ message: `¡Nivel ${difficulty + 1}! Velocidad aumentada`, type: 'success' });
+      setFeedback({ message: `¡Nivel ${difficulty + 1}! ¡Más rápido y más items!`, type: 'success' });
       setTimeout(() => setFeedback(null), 2000);
     }
   }, [timer, difficulty]);
