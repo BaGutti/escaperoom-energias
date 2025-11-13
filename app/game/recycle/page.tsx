@@ -75,6 +75,9 @@ export default function RecyclePage() {
   const spawnItem = useCallback(() => {
     if (isPaused || isGameOver) return;
 
+    // Limitar items simultáneos para no abrumar
+    if (items.length >= 5) return;
+
     const template = itemTemplates[Math.floor(Math.random() * itemTemplates.length)];
     const newItem: FallingItem = {
       id: `item-${nextItemId.current++}`,
@@ -84,11 +87,11 @@ export default function RecyclePage() {
       category: template.category,
       x: Math.random() * 80 + 10, // Entre 10% y 90%
       y: 0,
-      speed: 0.5 + (difficulty * 0.3),
+      speed: 0.25 + (difficulty * 0.1), // Velocidad más lenta
     };
 
     setItems(prev => [...prev, newItem]);
-  }, [isPaused, isGameOver, difficulty]);
+  }, [isPaused, isGameOver, difficulty, items.length]);
 
   // Timer y spawn de items
   useEffect(() => {
@@ -100,7 +103,7 @@ export default function RecyclePage() {
 
     const spawnInterval = setInterval(() => {
       spawnItem();
-    }, 2000 - (difficulty * 200)); // Más rápido con mayor dificultad
+    }, 3500 - (difficulty * 150)); // Spawn más espaciado, incremento gradual
 
     return () => {
       clearInterval(timerInterval);
@@ -134,22 +137,26 @@ export default function RecyclePage() {
     return () => clearInterval(moveInterval);
   }, [isGameOver, isPaused]);
 
-  // Aumentar dificultad cada 30 segundos
+  // Aumentar dificultad cada 45 segundos
   useEffect(() => {
-    if (timer > 0 && timer % 30 === 0 && difficulty < 5) {
+    if (timer > 0 && timer % 45 === 0 && difficulty < 5) {
       setDifficulty(prev => prev + 1);
       setFeedback({ message: `¡Nivel ${difficulty + 1}! Velocidad aumentada`, type: 'success' });
       setTimeout(() => setFeedback(null), 2000);
     }
   }, [timer, difficulty]);
 
-  // Game Over
+  // Game Over o Completado
   useEffect(() => {
-    if (lives <= 0 && !isGameOver) {
+    // Completar después de 2 minutos de juego O cuando se pierden todas las vidas
+    const isTimeUp = timer >= 120; // 2 minutos
+    const isOutOfLives = lives <= 0;
+
+    if ((isTimeUp || isOutOfLives) && !isGameOver) {
       setIsGameOver(true);
 
       // Calcular puntuación final
-      const timeBonus = timer * 10;
+      const timeBonus = Math.min(timer, 120) * 10;
       const finalScore = score + timeBonus;
 
       completeLevel(3, finalScore);
@@ -159,7 +166,7 @@ export default function RecyclePage() {
         router.push('/game/complete');
       }, 5000);
     }
-  }, [lives, isGameOver, score, timer, router]);
+  }, [lives, timer, isGameOver, score, router]);
 
   const handleItemClick = (item: FallingItem, containerType: string) => {
     if (item.type === containerType) {
@@ -196,12 +203,14 @@ export default function RecyclePage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-arcane-deep-purple to-black p-8">
         <div className="max-w-2xl w-full text-center">
           <h2 className="text-5xl font-bold text-arcane-neon-green glow-text mb-8 animate-pulse">
-            {lives > 0 ? '🎉 ¡Juego Completado!' : '💀 Game Over'}
+            {timer >= 120 ? '🎉 ¡Tiempo Completado!' : lives > 0 ? '🎉 ¡Juego Completado!' : '💀 Game Over'}
           </h2>
 
           <div className="bg-arcane-deep-purple/70 border-4 border-arcane-copper rounded-lg p-8 mb-8">
             <p className="text-2xl text-white mb-6">
-              {lives > 0
+              {timer >= 120
+                ? '¡Sobreviviste 2 minutos clasificando residuos!'
+                : lives > 0
                 ? '¡Has aprendido a clasificar correctamente!'
                 : 'Pero has aprendido mucho sobre reciclaje'}
             </p>
@@ -369,7 +378,7 @@ export default function RecyclePage() {
 
         {/* Instructions */}
         <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-4 text-center text-sm text-gray-300">
-          <p>💡 <strong>Cómo jugar:</strong> Observa los objetos que caen y clasifícalos en el contenedor correcto antes de que lleguen al fondo. ¡Cada error te quita una vida!</p>
+          <p>💡 <strong>Cómo jugar:</strong> Observa los objetos que caen y clasifícalos en el contenedor correcto antes de que lleguen al fondo. ¡Sobrevive 2 minutos o hasta perder tus 3 vidas!</p>
         </div>
       </div>
     </div>
