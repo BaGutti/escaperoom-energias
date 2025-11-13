@@ -12,7 +12,7 @@ import {
   PointerSensor,
   closestCenter,
 } from "@dnd-kit/core";
-import { completeLevel, finishGame } from "@/lib/gameState";
+import { completeLevel } from "@/lib/gameState";
 
 interface EnergySource {
   id: string;
@@ -89,10 +89,9 @@ export default function CircuitPage() {
 
       setScore(totalScore);
       completeLevel(2, totalScore);
-      finishGame(); // Marcar el juego como finalizado
 
       setTimeout(() => {
-        router.push('/game/complete');
+        router.push('/game/recycle');
       }, 4000);
     }
   }, [correctConnections, applications.length, attempts, timer, isComplete, router]);
