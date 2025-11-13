@@ -108,7 +108,8 @@ export default function ExplorePage() {
   }, []);
 
   useEffect(() => {
-    if (isComplete) {
+    if (isComplete && !selectedItem) {
+      // Solo avanzar cuando se haya cerrado el último modal
       // Calcular puntuación basada en tiempo
       const baseScore = 1000;
       const timeBonus = Math.max(0, 300 - timer); // Bonus por velocidad
@@ -118,9 +119,9 @@ export default function ExplorePage() {
 
       setTimeout(() => {
         router.push('/game/quiz');
-      }, 3000);
+      }, 5000); // Aumentado a 5 segundos
     }
-  }, [isComplete, router, timer]);
+  }, [isComplete, selectedItem, router, timer]);
 
   const handleClick = (clickedItem: ClickableObject) => {
     if (!clickedItem.found) {
@@ -130,7 +131,7 @@ export default function ExplorePage() {
         )
       );
       setSelectedItem(clickedItem);
-      setTimeout(() => setSelectedItem(null), 3000);
+      setTimeout(() => setSelectedItem(null), 5000); // Aumentado a 5 segundos
     }
   };
 
@@ -203,16 +204,16 @@ export default function ExplorePage() {
         {/* Representación de la ciudad oxidada */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-full h-full max-w-6xl">
-            {/* Objetos clickeables */}
+            {/* Objetos clickeables - ahora más sutiles */}
             {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleClick(item)}
                 disabled={item.found}
-                className={`absolute transition-all duration-300 ${
+                className={`absolute transition-all duration-300 group ${
                   item.found
-                    ? 'opacity-30 cursor-not-allowed'
-                    : 'opacity-100 hover:scale-110 cursor-pointer animate-pulse'
+                    ? 'opacity-20 cursor-not-allowed'
+                    : 'opacity-60 hover:opacity-100 cursor-pointer'
                 }`}
                 style={{
                   left: `${item.x}%`,
@@ -222,12 +223,18 @@ export default function ExplorePage() {
                   transform: 'translate(-50%, -50%)'
                 }}
               >
-                <div className={`w-full h-full rounded-full ${
+                <div className={`w-full h-full rounded-lg backdrop-blur-sm ${
                   item.found
-                    ? 'bg-gray-600'
-                    : 'bg-arcane-neon-green glow-border'
-                } flex items-center justify-center text-2xl shadow-2xl`}>
-                  {item.found ? '✓' : '?'}
+                    ? 'bg-gray-800/30 border-2 border-gray-700'
+                    : 'bg-arcane-copper/10 border-2 border-arcane-copper/30 group-hover:border-arcane-neon-green group-hover:bg-arcane-neon-green/20 group-hover:shadow-lg group-hover:shadow-arcane-neon-green/50'
+                } flex items-center justify-center text-xl transition-all duration-300`}>
+                  {item.found ? (
+                    <span className="text-gray-500">✓</span>
+                  ) : (
+                    <span className="opacity-0 group-hover:opacity-100 text-arcane-neon-green transition-opacity">
+                      🔍
+                    </span>
+                  )}
                 </div>
               </button>
             ))}
@@ -245,27 +252,36 @@ export default function ExplorePage() {
       {/* Modal de item descubierto */}
       {selectedItem && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-gradient-to-b from-arcane-deep-purple to-black border-4 border-arcane-neon-green rounded-lg p-8 max-w-lg mx-4 glow-border">
+          <div className="bg-gradient-to-b from-arcane-deep-purple to-black border-4 border-arcane-neon-green rounded-lg p-8 max-w-lg mx-4 glow-border relative">
+            <button
+              onClick={() => setSelectedItem(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+            >
+              ×
+            </button>
             <h2 className="text-3xl font-bold text-arcane-neon-green glow-text mb-4">
               ✨ ¡Descubriste algo!
             </h2>
             <h3 className="text-2xl font-bold text-arcane-copper mb-3">
               {selectedItem.name}
             </h3>
-            <p className="text-lg text-gray-300 italic">
+            <p className="text-lg text-gray-300 italic mb-4">
               {selectedItem.description}
             </p>
             <div className="mt-6 text-center">
-              <span className="inline-block px-4 py-2 bg-arcane-copper rounded-full text-white font-semibold">
+              <span className="inline-block px-4 py-2 bg-arcane-copper rounded-full text-white font-semibold mb-4">
                 Energía: {selectedItem.energyType.toUpperCase()}
               </span>
             </div>
+            <p className="text-sm text-gray-500 text-center mt-4">
+              Clic en X o espera para continuar...
+            </p>
           </div>
         </div>
       )}
 
-      {/* Pantalla de completado */}
-      {isComplete && (
+      {/* Pantalla de completado - solo mostrar cuando el modal esté cerrado */}
+      {isComplete && !selectedItem && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
           <div className="text-center">
             <h2 className="text-5xl font-bold text-arcane-neon-green glow-text mb-6 animate-pulse">

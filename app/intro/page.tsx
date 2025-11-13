@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { initializeGame } from "@/lib/gameState";
 
 const storyParts = [
   {
@@ -48,6 +49,9 @@ export default function IntroPage() {
   const [canSkip, setCanSkip] = useState(false);
 
   useEffect(() => {
+    // Inicializar el juego cuando empieza
+    initializeGame();
+
     // Permitir skip después de 2 segundos
     const skipTimer = setTimeout(() => setCanSkip(true), 2000);
     return () => clearTimeout(skipTimer);
