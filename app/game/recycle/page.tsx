@@ -67,7 +67,7 @@ export default function RecyclePage() {
   const [isPaused, setIsPaused] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [selectedItem, setSelectedItem] = useState<FallingItem | null>(null);
+  const [draggedItem, setDraggedItem] = useState<FallingItem | null>(null);
 
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const nextItemId = useRef(0);
@@ -169,10 +169,18 @@ export default function RecyclePage() {
     }
   }, [lives, timer, isGameOver, score, router]);
 
-  const handleContainerClick = (containerType: string) => {
-    if (!selectedItem) return;
+  const handleDragStart = (item: FallingItem) => {
+    setDraggedItem(item);
+  };
 
-    if (selectedItem.type === containerType) {
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+  };
+
+  const handleDrop = (containerType: string) => {
+    if (!draggedItem) return;
+
+    if (draggedItem.type === containerType) {
       // Correcto
       setScore(prev => prev + (50 * difficulty));
       setContainerCounts(prev =>
@@ -181,7 +189,7 @@ export default function RecyclePage() {
       setFeedback({ message: `¡Correcto! +${50 * difficulty} puntos`, type: 'success' });
 
       // Remover item
-      setItems(prev => prev.filter(i => i.id !== selectedItem.id));
+      setItems(prev => prev.filter(i => i.id !== draggedItem.id));
     } else {
       // Incorrecto
       setLives(prev => Math.max(0, prev - 1));
@@ -189,11 +197,15 @@ export default function RecyclePage() {
       setFeedback({ message: '¡Incorrecto! -25 puntos y -1 vida', type: 'error' });
 
       // Remover item
-      setItems(prev => prev.filter(i => i.id !== selectedItem.id));
+      setItems(prev => prev.filter(i => i.id !== draggedItem.id));
     }
 
-    setSelectedItem(null);
+    setDraggedItem(null);
     setTimeout(() => setFeedback(null), 2000);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Necesario para permitir el drop
   };
 
   const formatTime = (seconds: number) => {
@@ -269,22 +281,12 @@ export default function RecyclePage() {
             <p className="text-sm text-gray-400">¡Clasifica los residuos antes de que caigan!</p>
           </div>
 
-          <div className="flex gap-2">
-            {selectedItem && (
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="px-4 py-2 bg-red-600/50 hover:bg-red-600 rounded-lg transition-all text-white"
-              >
-                ✖ Cancelar
-              </button>
-            )}
-            <button
-              onClick={() => setIsPaused(!isPaused)}
-              className="px-4 py-2 bg-arcane-copper/50 hover:bg-arcane-copper rounded-lg transition-all"
-            >
-              {isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
-            </button>
-          </div>
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            className="px-4 py-2 bg-arcane-copper/50 hover:bg-arcane-copper rounded-lg transition-all"
+          >
+            {isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
+          </button>
         </div>
 
         {/* Stats */}
@@ -333,15 +335,17 @@ export default function RecyclePage() {
           className="relative bg-arcane-rust/20 border-4 border-arcane-copper rounded-lg overflow-hidden"
           style={{ height: '60vh', minHeight: '400px' }}
         >
-          {/* Falling Items - Click para clasificar */}
+          {/* Falling Items - Arrastra para clasificar */}
           {items.map(item => (
-            <button
+            <div
               key={item.id}
-              onClick={() => setSelectedItem(item)}
-              className={`absolute transition-all cursor-pointer ${
-                selectedItem?.id === item.id
-                  ? 'scale-150 z-50'
-                  : 'hover:scale-125 active:scale-95 z-10'
+              draggable
+              onDragStart={() => handleDragStart(item)}
+              onDragEnd={handleDragEnd}
+              className={`absolute transition-all cursor-grab active:cursor-grabbing ${
+                draggedItem?.id === item.id
+                  ? 'opacity-50 scale-110 z-50'
+                  : 'hover:scale-110 z-10'
               }`}
               style={{
                 left: `${item.x}%`,
@@ -350,17 +354,17 @@ export default function RecyclePage() {
               }}
             >
               <div className={`bg-white rounded-lg p-3 shadow-2xl ${
-                selectedItem?.id === item.id
-                  ? 'border-8 border-arcane-neon-blue animate-pulse'
+                draggedItem?.id === item.id
+                  ? 'border-4 border-arcane-neon-blue'
                   : 'border-4 border-arcane-neon-green hover:border-arcane-neon-blue'
               }`}>
                 <div className="text-4xl">{item.icon}</div>
                 <div className="text-xs font-bold mt-1 text-black">{item.name}</div>
                 <div className="text-xs text-arcane-copper mt-1">
-                  {selectedItem?.id === item.id ? '✓ Seleccionado' : 'Click'}
+                  {draggedItem?.id === item.id ? 'Arrastrando...' : 'Arrastra'}
                 </div>
               </div>
-            </button>
+            </div>
           ))}
 
           {/* Paused overlay */}
@@ -374,36 +378,35 @@ export default function RecyclePage() {
           )}
         </div>
 
-        {/* Containers - Click para clasificar el item seleccionado */}
+        {/* Containers - Suelta aquí para clasificar */}
         <div className="grid grid-cols-5 gap-2 mt-4">
           {containerCounts.map(container => (
-            <button
+            <div
               key={container.id}
-              onClick={() => handleContainerClick(container.type)}
-              disabled={!selectedItem}
-              className={`${container.color} rounded-lg p-4 text-center cursor-pointer hover:opacity-90 transition-all duration-300 ${
-                selectedItem
-                  ? 'border-4 border-arcane-neon-green animate-pulse scale-105'
+              onDragOver={handleDragOver}
+              onDrop={() => handleDrop(container.type)}
+              className={`${container.color} rounded-lg p-4 text-center transition-all duration-300 ${
+                draggedItem
+                  ? 'border-4 border-arcane-neon-green scale-105 shadow-2xl shadow-arcane-neon-green/50'
                   : 'border-2 border-white/30'
-              } ${!selectedItem ? 'opacity-60' : 'opacity-100'}`}
+              }`}
             >
               <div className="text-3xl mb-2">{container.icon}</div>
               <div className="text-white font-bold text-sm">{container.name}</div>
               <div className="text-white text-xs mt-1">Items: {container.count}</div>
-              {selectedItem && (
-                <div className="mt-2 text-xs text-white bg-black/30 rounded px-2 py-1">
-                  ¡Click aquí!
+              {draggedItem && (
+                <div className="mt-2 text-xs text-white bg-black/50 rounded px-2 py-1 animate-bounce">
+                  ⬇️ Suelta aquí
                 </div>
               )}
-            </button>
+            </div>
           ))}
         </div>
 
         {/* Instructions */}
         <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-4 text-center text-sm text-gray-300">
           <p className="mb-2">💡 <strong>Cómo jugar:</strong></p>
-          <p className="mb-1">1️⃣ Haz <strong>CLICK en el objeto</strong> que cae</p>
-          <p className="mb-1">2️⃣ Haz <strong>CLICK en el contenedor</strong> correcto (los contenedores brillarán)</p>
+          <p className="mb-1">🖱️ <strong>ARRASTRA</strong> los objetos que caen y <strong>SUÉLTALOS</strong> en el contenedor correcto</p>
           <p className="text-arcane-neon-green font-bold">🎯 Objetivo: ¡Sobrevive 2 minutos clasificando correctamente!</p>
         </div>
       </div>
