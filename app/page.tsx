@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
@@ -27,6 +28,18 @@ export default function Home() {
         <p className="text-xl md:text-2xl text-arcane-copper mb-8 font-semibold">
           Un viaje a través del tiempo para salvar el planeta
         </p>
+
+        {/* Imagen de babosas */}
+        <div className="mb-8 relative w-full max-w-2xl mx-auto h-64 md:h-80 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-neon-green animate-pulse-slow">
+          <Image
+            src="/images/babosas-luminosas.png"
+            alt="Babosas luminosas del futuro"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        </div>
 
         {/* Descripción */}
         <div className="bg-arcane-deep-purple/50 backdrop-blur-sm border-2 border-arcane-copper rounded-lg p-8 mb-12 max-w-2xl mx-auto">

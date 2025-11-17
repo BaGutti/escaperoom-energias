@@ -2,43 +2,58 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { initializeGame } from "@/lib/gameState";
 
 const storyParts = [
   {
     id: 1,
     text: "Era un día como tantos otros, de esos en que el mes de junio viste de oro las hojas de los árboles...",
-    subtext: "Harry caminaba distraído, sumido en sus pensamientos."
+    subtext: "Harry caminaba distraído, sumido en sus pensamientos.",
+    image: null,
+    duration: 6000 // 6 segundos - introducción simple
   },
   {
     id: 2,
     text: "¡TRAS! ¡CRAC! ¡CATAPLUM!",
-    subtext: "Un tremendo estruendo sacudió el mundo bajo sus pies. El suelo se abrió cual boca hambrienta..."
+    subtext: "Un tremendo estruendo sacudió el mundo bajo sus pies. El suelo se abrió cual boca hambrienta...",
+    image: null,
+    duration: 7000 // 7 segundos - texto más largo
   },
   {
     id: 3,
     text: "Harry cayó por la alcantarilla",
-    subtext: "Cuando tocó el suelo, no sintió dolor alguno. Alzó la vista y lo que vio le heló la sangre..."
+    subtext: "Cuando tocó el suelo, no sintió dolor alguno. Alzó la vista y lo que vio le heló la sangre...",
+    image: "/images/harry-cayendo.png",
+    duration: 9000 // 9 segundos - tiene imagen dramática
   },
   {
     id: 4,
     text: "Estaba en su ciudad, pero una ciudad que no era.",
-    subtext: "Todo lucía un color de óxido y herrumbre, como si el tiempo mismo se hubiera oxidado junto con el mundo."
+    subtext: "Todo lucía un color de óxido y herrumbre, como si el tiempo mismo se hubiera oxidado junto con el mundo.",
+    image: "/images/ciudad-oxidada.png",
+    duration: 9000 // 9 segundos - imagen + texto largo
   },
   {
     id: 5,
     text: "En la plaza donde solía alimentar palomas...",
-    subtext: "Descubrió criaturas que jamás había contemplado: ¡Babosas luminosas reunidas en asamblea!"
+    subtext: "Descubrió criaturas que jamás había contemplado: ¡Babosas luminosas reunidas en asamblea!",
+    image: "/images/babosas-luminosas.png",
+    duration: 9000 // 9 segundos - imagen importante + texto
   },
   {
     id: 6,
     text: "Las babosas le revelaron una terrible verdad:",
-    subtext: "Este no era un mundo nuevo, sino el futuro que aguardaba a la humanidad..."
+    subtext: "Este no era un mundo nuevo, sino el futuro que aguardaba a la humanidad...",
+    image: null,
+    duration: 7000 // 7 segundos - revelación importante
   },
   {
     id: 7,
     text: '"La humanidad causó este páramo desértico con sus malas prácticas."',
-    subtext: "Pero aún hay esperanza. Te enseñaremos cómo salvar el planeta..."
+    subtext: "Pero aún hay esperanza. Te enseñaremos cómo salvar el planeta...",
+    image: null,
+    duration: 8000 // 8 segundos - mensaje final importante
   }
 ];
 
@@ -59,13 +74,14 @@ export default function IntroPage() {
 
   useEffect(() => {
     if (currentPart < storyParts.length) {
+      const currentDuration = storyParts[currentPart].duration;
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
           setCurrentPart(prev => prev + 1);
           setIsVisible(true);
         }, 500);
-      }, 4000);
+      }, currentDuration);
 
       return () => clearTimeout(timer);
     } else {
@@ -135,7 +151,21 @@ export default function IntroPage() {
       </div>
 
       {/* Contenido principal */}
-      <div className={`max-w-3xl mx-auto text-center z-10 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`max-w-4xl mx-auto text-center z-10 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Imagen si existe */}
+        {currentStory.image && (
+          <div className="mb-8 relative w-full h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-copper">
+            <Image
+              src={currentStory.image}
+              alt={currentStory.text}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-arcane-deep-purple/80 via-transparent to-transparent" />
+          </div>
+        )}
+
         <div className="bg-arcane-deep-purple/70 backdrop-blur-md border-2 border-arcane-copper rounded-lg p-12 shadow-2xl">
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-arcane-neon-green glow-text">
             {currentStory.text}

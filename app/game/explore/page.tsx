@@ -94,6 +94,7 @@ export default function ExplorePage() {
   const [selectedItem, setSelectedItem] = useState<ClickableObject | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [modalTimeout, setModalTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const foundCount = items.filter(item => item.found).length;
   const totalCount = items.length;
@@ -106,6 +107,15 @@ export default function ExplorePage() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Limpiar timeout al desmontar componente
+  useEffect(() => {
+    return () => {
+      if (modalTimeout) {
+        clearTimeout(modalTimeout);
+      }
+    };
+  }, [modalTimeout]);
 
   useEffect(() => {
     if (isComplete && !selectedItem) {
@@ -123,15 +133,35 @@ export default function ExplorePage() {
     }
   }, [isComplete, selectedItem, router, timer]);
 
+  const closeModal = () => {
+    if (modalTimeout) {
+      clearTimeout(modalTimeout);
+      setModalTimeout(null);
+    }
+    setSelectedItem(null);
+  };
+
   const handleClick = (clickedItem: ClickableObject) => {
     if (!clickedItem.found) {
+      // Limpiar cualquier timeout anterior
+      if (modalTimeout) {
+        clearTimeout(modalTimeout);
+      }
+
       setItems(prevItems =>
         prevItems.map(item =>
           item.id === clickedItem.id ? { ...item, found: true } : item
         )
       );
       setSelectedItem(clickedItem);
-      setTimeout(() => setSelectedItem(null), 5000); // Aumentado a 5 segundos
+
+      // Crear nuevo timeout y guardar su referencia
+      const newTimeout = setTimeout(() => {
+        setSelectedItem(null);
+        setModalTimeout(null);
+      }, 7000); // 7 segundos para que los niños lean con calma
+
+      setModalTimeout(newTimeout);
     }
   };
 
@@ -254,7 +284,7 @@ export default function ExplorePage() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-fade-in">
           <div className="bg-gradient-to-b from-arcane-deep-purple to-black border-4 border-arcane-neon-green rounded-lg p-8 max-w-lg mx-4 glow-border relative">
             <button
-              onClick={() => setSelectedItem(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
             >
               ×
