@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getGameState, formatTime, getPlayTime, resetGame } from "@/lib/gameState";
+import { getGameState, formatTime, getPlayTime, resetGame, isGameStarted } from "@/lib/gameState";
 
 export default function CompletePage() {
   const router = useRouter();
@@ -12,6 +12,11 @@ export default function CompletePage() {
   const certificateRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Verificar si llegó por navegación válida o es una recarga
+    if (!isGameStarted()) {
+      router.push('/');
+      return;
+    }
     const state = getGameState();
     if (!state) {
       router.push('/');
