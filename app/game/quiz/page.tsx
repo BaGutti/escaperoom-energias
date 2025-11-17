@@ -51,6 +51,7 @@ export default function QuizPage() {
     }
 
     // Avanzar a la siguiente pregunta después de mostrar feedback
+    // Tiempo suficiente para que niños de 6to-7mo lean la explicación
     setTimeout(() => {
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
@@ -64,7 +65,7 @@ export default function QuizPage() {
           router.push('/game/circuit');
         }, 4000);
       }
-    }, 3000);
+    }, 7000); // 7 segundos para leer con calma
   };
 
   const getOptionColor = (index: number) => {

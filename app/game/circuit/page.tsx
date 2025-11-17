@@ -30,7 +30,17 @@ interface Application {
   connectedEnergy?: string;
 }
 
-const energySources: EnergySource[] = [
+// Función para mezclar un array (Fisher-Yates shuffle)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+const baseEnergySources: EnergySource[] = [
   { id: "solar", name: "Energía Solar", icon: "☀️", type: "solar" },
   { id: "wind", name: "Energía Eólica", icon: "💨", type: "eolica" },
   { id: "hydro", name: "Energía Hidráulica", icon: "💧", type: "hidraulica" },
@@ -38,13 +48,17 @@ const energySources: EnergySource[] = [
   { id: "bio", name: "Biomasa", icon: "🌿", type: "biomasa" },
 ];
 
-const initialApplications: Application[] = [
+const baseApplications: Application[] = [
   { id: "app1", name: "Panel en Casa", correctEnergy: "solar", icon: "🏠", connected: false },
-  { id: "app2", name: "Molino de Viento", correctEnergy: "wind", icon: "🏭", connected: false },
-  { id: "app3", name: "Presa Hidroeléctrica", correctEnergy: "hydro", icon: "🌊", connected: false },
-  { id: "app4", name: "Planta Geotérmica", correctEnergy: "geo", icon: "⚡", connected: false },
-  { id: "app5", name: "Generador de Biomasa", correctEnergy: "bio", icon: "🔥", connected: false },
+  { id: "app2", name: "Parque de Turbinas", correctEnergy: "wind", icon: "🏭", connected: false },
+  { id: "app3", name: "Presa en el Río", correctEnergy: "hydro", icon: "🌊", connected: false },
+  { id: "app4", name: "Planta Termal", correctEnergy: "geo", icon: "⚡", connected: false },
+  { id: "app5", name: "Procesador Orgánico", correctEnergy: "bio", icon: "🔥", connected: false },
 ];
+
+// Mezclar ambos arrays al cargar
+const energySources = shuffleArray(baseEnergySources);
+const initialApplications = shuffleArray(baseApplications);
 
 export default function CircuitPage() {
   const router = useRouter();

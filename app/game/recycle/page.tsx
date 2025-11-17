@@ -87,6 +87,7 @@ export default function RecyclePage() {
 
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const nextItemId = useRef(0);
+  const lastLevelUpTime = useRef(0); // Para prevenir múltiples level-ups
 
   // Generar nuevos items
   const spawnItem = useCallback(() => {
@@ -155,27 +156,34 @@ export default function RecyclePage() {
     return () => clearInterval(moveInterval);
   }, [isGameOver, isPaused]);
 
-  // Aumentar dificultad cada 30 segundos (más frecuente)
+  // Aumentar dificultad cada 20 segundos (para que lleguen a nivel 8 en ~2:20 min)
   useEffect(() => {
-    if (timer > 0 && timer % 30 === 0 && difficulty < 8) {
-      setDifficulty(prev => prev + 1);
-      setFeedback({ message: `¡Nivel ${difficulty + 1}! ¡Más rápido y más items!`, type: 'success' });
-      setTimeout(() => setFeedback(null), 2000);
+    // Solo aumentar si ha pasado el tiempo Y no hemos aumentado en este segundo
+    if (timer > 0 && timer % 20 === 0 && difficulty < 8 && lastLevelUpTime.current !== timer) {
+      lastLevelUpTime.current = timer; // Marcar este segundo como usado
+      setDifficulty(prev => {
+        const newDiff = prev + 1;
+        setFeedback({ message: `¡Nivel ${newDiff}! ¡Más rápido y más items!`, type: 'success' });
+        setTimeout(() => setFeedback(null), 2000);
+        return newDiff;
+      });
     }
   }, [timer, difficulty]);
 
   // Game Over o Completado
   useEffect(() => {
-    // Completar después de 2 minutos de juego O cuando se pierden todas las vidas
-    const isTimeUp = timer >= 120; // 2 minutos
+    // Completar solo cuando se pierden todas las vidas O se completan 3 minutos (para jugadores expertos)
+    const isTimeUp = timer >= 180; // 3 minutos máximo
     const isOutOfLives = lives <= 0;
+    const hasPlayedEnough = timer >= 120; // Mínimo 2 minutos para completar
 
-    if ((isTimeUp || isOutOfLives) && !isGameOver) {
+    if ((isOutOfLives || isTimeUp) && !isGameOver && hasPlayedEnough) {
       setIsGameOver(true);
 
       // Calcular puntuación final
-      const timeBonus = Math.min(timer, 120) * 10;
-      const finalScore = score + timeBonus;
+      const survivalBonus = timer * 10; // Bonus por tiempo sobrevivido
+      const difficultyBonus = difficulty * 200; // Bonus por nivel alcanzado
+      const finalScore = score + survivalBonus + difficultyBonus;
 
       completeLevel(3, finalScore);
       finishGame(); // Marcar el juego como finalizado
@@ -183,8 +191,16 @@ export default function RecyclePage() {
       setTimeout(() => {
         router.push('/game/complete');
       }, 5000);
+    } else if (isOutOfLives && !isGameOver && !hasPlayedEnough) {
+      // Si pierden antes de 2 minutos, igual les damos el nivel
+      setIsGameOver(true);
+      completeLevel(3, score);
+      finishGame();
+      setTimeout(() => {
+        router.push('/game/complete');
+      }, 5000);
     }
-  }, [lives, timer, isGameOver, score, router]);
+  }, [lives, timer, isGameOver, score, difficulty, router]);
 
   const handleDragStart = (item: FallingItem) => {
     setDraggedItem(item);
@@ -236,19 +252,23 @@ export default function RecyclePage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-arcane-deep-purple to-black p-8">
         <div className="max-w-2xl w-full text-center">
           <h2 className="text-5xl font-bold text-arcane-neon-green glow-text mb-8 animate-pulse">
-            {timer >= 120 ? '🎉 ¡Tiempo Completado!' : lives > 0 ? '🎉 ¡Juego Completado!' : '💀 Game Over'}
+            {difficulty >= 8 ? '👑 ¡LEYENDA DEL RECICLAJE!' : timer >= 180 ? '🎉 ¡MAESTRO DEL RECICLAJE!' : lives <= 0 ? '💀 Game Over' : '🎉 ¡Nivel Completado!'}
           </h2>
 
           <div className="bg-arcane-deep-purple/70 border-4 border-arcane-copper rounded-lg p-8 mb-8">
             <p className="text-2xl text-white mb-6">
-              {timer >= 120
-                ? '¡Sobreviviste 2 minutos clasificando residuos!'
+              {difficulty >= 8
+                ? `¡Increíble! ¡Alcanzaste el nivel ${difficulty}!`
+                : timer >= 180
+                ? '¡Sobreviviste 3 minutos clasificando residuos!'
+                : timer >= 120
+                ? `¡Excelente trabajo! Duraste ${formatTime(timer)}`
                 : lives > 0
                 ? '¡Has aprendido a clasificar correctamente!'
                 : 'Pero has aprendido mucho sobre reciclaje'}
             </p>
 
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
                 <p className="text-gray-400 text-sm mb-2">Puntuación Final</p>
                 <p className="text-4xl font-bold text-arcane-neon-green">{score}</p>
@@ -256,6 +276,12 @@ export default function RecyclePage() {
               <div>
                 <p className="text-gray-400 text-sm mb-2">Tiempo Jugado</p>
                 <p className="text-4xl font-bold text-arcane-neon-blue">{formatTime(timer)}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm mb-2">Nivel Alcanzado</p>
+                <p className="text-4xl font-bold text-arcane-copper">
+                  {difficulty >= 8 ? '👑 ' : ''}{difficulty}
+                </p>
               </div>
             </div>
 
@@ -424,7 +450,8 @@ export default function RecyclePage() {
         <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-4 text-center text-sm text-gray-300">
           <p className="mb-2">💡 <strong>Cómo jugar:</strong></p>
           <p className="mb-1">🖱️ <strong>ARRASTRA</strong> los objetos que caen y <strong>SUÉLTALOS</strong> en el contenedor correcto</p>
-          <p className="text-arcane-neon-green font-bold">🎯 Objetivo: ¡Sobrevive 2 minutos clasificando correctamente!</p>
+          <p className="text-arcane-neon-green font-bold">🎯 Objetivo: ¡Sobrevive mínimo 2 minutos clasificando!</p>
+          <p className="text-arcane-copper font-bold mt-1">👑 Desafío Experto: ¡Llega al nivel 8 para ser una leyenda!</p>
         </div>
       </div>
     </div>
