@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel, finishGame } from "@/lib/gameState";
+import { completeLevel, finishGame, isGameStarted } from "@/lib/gameState";
 
 interface FallingItem {
   id: string;
@@ -111,6 +111,13 @@ export default function RecyclePage() {
 
     setItems(prev => [...prev, newItem]);
   }, [isPaused, isGameOver, difficulty, items.length]);
+
+  // Verificar si el juego está iniciado
+  useEffect(() => {
+    if (!isGameStarted()) {
+      router.push('/');
+    }
+  }, [router]);
 
   // Timer y spawn de items
   useEffect(() => {

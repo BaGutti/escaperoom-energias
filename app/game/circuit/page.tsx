@@ -12,7 +12,7 @@ import {
   PointerSensor,
   closestCenter,
 } from "@dnd-kit/core";
-import { completeLevel } from "@/lib/gameState";
+import { completeLevel, isGameStarted } from "@/lib/gameState";
 
 interface EnergySource {
   id: string;
@@ -56,13 +56,11 @@ const baseApplications: Application[] = [
   { id: "app5", name: "Procesador Orgánico", correctEnergy: "bio", icon: "🔥", connected: false },
 ];
 
-// Mezclar ambos arrays al cargar
-const energySources = shuffleArray(baseEnergySources);
-const initialApplications = shuffleArray(baseApplications);
-
 export default function CircuitPage() {
   const router = useRouter();
-  const [applications, setApplications] = useState<Application[]>(initialApplications);
+  // Mezclar arrays solo en el cliente, una vez durante el montaje inicial
+  const [energySources] = useState<EnergySource[]>(() => shuffleArray(baseEnergySources));
+  const [applications, setApplications] = useState<Application[]>(() => shuffleArray(baseApplications));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -81,6 +79,13 @@ export default function CircuitPage() {
   const correctConnections = applications.filter(
     app => app.connected && app.connectedEnergy === app.correctEnergy
   ).length;
+
+  // Verificar si el juego está iniciado
+  useEffect(() => {
+    if (!isGameStarted()) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!isComplete) {
@@ -150,7 +155,7 @@ export default function CircuitPage() {
   };
 
   const handleReset = () => {
-    setApplications(initialApplications);
+    setApplications(shuffleArray(baseApplications));
     setAttempts(0);
     setScore(0);
     setTimer(0);

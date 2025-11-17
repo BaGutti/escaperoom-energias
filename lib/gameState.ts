@@ -71,6 +71,7 @@ export const finishGame = (): void => {
 export const resetGame = (): void => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
+  clearSession();
 };
 
 // Calcular tiempo de juego
@@ -87,4 +88,31 @@ export const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Verificar si el juego está iniciado (usa timestamp para detectar navegación reciente)
+export const isGameStarted = (): boolean => {
+  if (typeof window === 'undefined') return false;
+
+  const state = getGameState();
+  if (!state || !state.startTime) return false;
+
+  // Verificar timestamp de navegación (debe ser reciente, < 3 segundos)
+  const navTimestamp = sessionStorage.getItem('babosas-nav-timestamp');
+  if (!navTimestamp) return false;
+
+  const timeSinceNav = Date.now() - parseInt(navTimestamp, 10);
+  return timeSinceNav < 3000; // 3 segundos de margen
+};
+
+// Marcar navegación reciente (llamar antes de router.push)
+export const markSessionActive = (): void => {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem('babosas-nav-timestamp', Date.now().toString());
+};
+
+// Limpiar sesión
+export const clearSession = (): void => {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem('babosas-nav-timestamp');
 };

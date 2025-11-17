@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel } from "@/lib/gameState";
+import { completeLevel, isGameStarted } from "@/lib/gameState";
 
 interface ClickableObject {
   id: string;
@@ -99,6 +99,13 @@ export default function ExplorePage() {
   const foundCount = items.filter(item => item.found).length;
   const totalCount = items.length;
   const isComplete = foundCount === totalCount;
+
+  // Verificar si el juego está iniciado
+  useEffect(() => {
+    if (!isGameStarted()) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     const interval = setInterval(() => {

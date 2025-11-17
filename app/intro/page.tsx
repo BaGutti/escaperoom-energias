@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { initializeGame } from "@/lib/gameState";
+import { initializeGame, markSessionActive } from "@/lib/gameState";
 
 const storyParts = [
   {
@@ -66,6 +66,7 @@ export default function IntroPage() {
   useEffect(() => {
     // Inicializar el juego cuando empieza
     initializeGame();
+    markSessionActive(); // Marcar sesión como activa
 
     // Permitir skip después de 2 segundos
     const skipTimer = setTimeout(() => setCanSkip(true), 2000);

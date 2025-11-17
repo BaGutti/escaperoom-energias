@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel } from "@/lib/gameState";
+import { completeLevel, isGameStarted } from "@/lib/gameState";
 import { getRandomQuestions } from "@/lib/quizData";
 import type { QuizQuestion } from "@/types";
 
@@ -17,10 +17,15 @@ export default function QuizPage() {
   const [timer, setTimer] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
+  // Verificar si el juego está iniciado
   useEffect(() => {
+    if (!isGameStarted()) {
+      router.push('/');
+      return;
+    }
     // Cargar 10 preguntas aleatorias
     setQuestions(getRandomQuestions(10));
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (questions.length > 0 && !isComplete) {
