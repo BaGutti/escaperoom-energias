@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel, isGameStarted } from "@/lib/gameState";
+import { completeLevel, isGameStarted, markSessionActive } from "@/lib/gameState";
 import { getRandomQuestions } from "@/lib/quizData";
 import type { QuizQuestion } from "@/types";
 
@@ -67,6 +67,7 @@ export default function QuizPage() {
         setIsComplete(true);
         completeLevel(1, score);
         setTimeout(() => {
+          markSessionActive();
           router.push('/game/circuit');
         }, 4000);
       }

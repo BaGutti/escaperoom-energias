@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel, isGameStarted } from "@/lib/gameState";
+import { completeLevel, isGameStarted, markSessionActive } from "@/lib/gameState";
 
 interface ClickableObject {
   id: string;
@@ -135,6 +135,7 @@ export default function ExplorePage() {
       completeLevel(0, totalScore);
 
       setTimeout(() => {
+        markSessionActive();
         router.push('/game/quiz');
       }, 5000); // Aumentado a 5 segundos
     }

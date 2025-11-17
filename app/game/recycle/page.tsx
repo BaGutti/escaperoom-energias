@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { completeLevel, finishGame, isGameStarted } from "@/lib/gameState";
+import { completeLevel, finishGame, isGameStarted, markSessionActive } from "@/lib/gameState";
 
 interface FallingItem {
   id: string;
@@ -196,6 +196,7 @@ export default function RecyclePage() {
       finishGame(); // Marcar el juego como finalizado
 
       setTimeout(() => {
+        markSessionActive();
         router.push('/game/complete');
       }, 5000);
     } else if (isOutOfLives && !isGameOver && !hasPlayedEnough) {
@@ -204,6 +205,7 @@ export default function RecyclePage() {
       completeLevel(3, score);
       finishGame();
       setTimeout(() => {
+        markSessionActive();
         router.push('/game/complete');
       }, 5000);
     }

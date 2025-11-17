@@ -12,7 +12,7 @@ import {
   PointerSensor,
   closestCenter,
 } from "@dnd-kit/core";
-import { completeLevel, isGameStarted } from "@/lib/gameState";
+import { completeLevel, isGameStarted, markSessionActive } from "@/lib/gameState";
 
 interface EnergySource {
   id: string;
@@ -110,6 +110,7 @@ export default function CircuitPage() {
       completeLevel(2, totalScore);
 
       setTimeout(() => {
+        markSessionActive();
         router.push('/game/recycle');
       }, 4000);
     }
