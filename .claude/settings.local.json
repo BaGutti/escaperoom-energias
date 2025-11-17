@@ -18,7 +18,9 @@
       "Bash(del nul 2)",
       "Bash(if exist \".next\" rmdir /s /q \".next\")",
       "Bash(if exist \"nul\" del nul)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []

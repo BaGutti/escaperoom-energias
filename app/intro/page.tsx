@@ -161,6 +161,7 @@ export default function IntroPage() {
               fill
               className="object-cover"
               priority
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-arcane-deep-purple/80 via-transparent to-transparent" />
           </div>
