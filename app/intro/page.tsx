@@ -88,6 +88,7 @@ export default function IntroPage() {
     } else {
       // Historia terminada, ir al primer juego
       setTimeout(() => {
+        markSessionActive();
         router.push('/game/explore');
       }, 2000);
     }
@@ -95,6 +96,7 @@ export default function IntroPage() {
 
   const handleSkip = () => {
     if (canSkip) {
+      markSessionActive();
       router.push('/game/explore');
     }
   };
