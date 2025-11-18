@@ -30,16 +30,16 @@ export default function Home() {
         </p>
 
         {/* Imagen de babosas */}
-        <div className="mb-8 relative w-full max-w-2xl mx-auto h-64 md:h-80 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-neon-green animate-pulse-slow">
+        <div className="mb-8 relative w-full max-w-2xl mx-auto h-64 md:h-80 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-neon-green animate-pulse-slow bg-black">
           <Image
-            src="/images/babosas-luminosas.png"
+            src="/images/babosas-en-la-plaza.png"
             alt="Babosas luminosas del futuro"
             fill
-            className="object-cover"
+            className="object-contain"
             priority
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Descripción */}

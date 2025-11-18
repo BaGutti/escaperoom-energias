@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { getGameState, formatTime, getPlayTime, resetGame, isGameStarted } from "@/lib/gameState";
 
 export default function CompletePage() {
@@ -58,13 +59,55 @@ export default function CompletePage() {
   if (!nameSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-arcane-deep-purple to-black p-8">
-        <div className="max-w-md w-full">
+        <div className="max-w-4xl w-full">
+          {/* 1. Final del cuento - Portal */}
+          <div className="mb-8 relative w-full h-96 rounded-lg overflow-hidden shadow-2xl border-4 border-arcane-neon-green bg-black">
+            <Image
+              src="/images/babosas-cansadas.png"
+              alt="Babosas creando el portal con su último aliento"
+              fill
+              className="object-contain"
+              priority
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col items-center justify-end p-8 pointer-events-none">
+              <div className="text-center">
+                <p className="text-2xl md:text-3xl font-bold text-arcane-neon-green glow-text mb-4">
+                  "Vuelve a tu tiempo, guardián del futuro"
+                </p>
+                <p className="text-lg text-gray-300 italic mb-2">
+                  Las babosas, con su último aliento de vida, crearon un portal luminoso...
+                </p>
+                <p className="text-md text-arcane-copper">
+                  Te entregaron el conocimiento para salvar el planeta desde el pasado.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. El pergamino transformándose */}
+          <div className="mb-8 relative w-full max-w-2xl mx-auto h-64 rounded-lg overflow-hidden shadow-2xl border-4 border-arcane-copper">
+            <Image
+              src="/images/pergaminoafolleto.png"
+              alt="El conocimiento ancestral transformándose"
+              fill
+              className="object-contain bg-black"
+              unoptimized
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 text-center">
+              <p className="text-lg text-arcane-neon-blue font-bold">
+                El conocimiento antiguo se transforma en tecnología del futuro
+              </p>
+            </div>
+          </div>
+
+          {/* 3. Formulario de nombre */}
           <div className="bg-arcane-deep-purple/70 border-4 border-arcane-copper rounded-lg p-8 text-center">
             <h2 className="text-3xl font-bold text-arcane-neon-green glow-text mb-4">
-              🎉 ¡Aventura Completada!
+              🎉 ¡Has completado tu misión!
             </h2>
             <p className="text-gray-300 mb-6">
-              Has completado todos los niveles. Ingresa tu nombre para recibir tu certificado:
+              Ahora posees el conocimiento para cambiar el futuro. Ingresa tu nombre para recibir tu certificado:
             </p>
 
             <form onSubmit={handleNameSubmit}>
@@ -127,8 +170,18 @@ export default function CompletePage() {
 
         {/* Certificado */}
         <div ref={certificateRef} className="mb-8">
-          <div className="bg-gradient-to-br from-arcane-copper via-arcane-rust to-arcane-oxidized border-8 border-arcane-neon-green rounded-lg p-12 text-center shadow-2xl">
-            <div className="bg-black/30 rounded-lg p-8">
+          <div className="relative bg-gradient-to-br from-arcane-copper via-arcane-rust to-arcane-oxidized border-8 border-arcane-neon-green rounded-lg p-12 text-center shadow-2xl overflow-hidden">
+            {/* Imagen de fondo del certificado */}
+            <div className="absolute inset-0 opacity-20">
+              <Image
+                src="/images/FinalJuego-certificado.png"
+                alt="Fondo del certificado"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+            <div className="relative bg-black/30 rounded-lg p-8">
               <h2 className="text-4xl font-bold text-arcane-neon-green glow-text mb-6">
                 ✨ CERTIFICADO DE GUARDIÁN DEL FUTURO ✨
               </h2>
@@ -181,6 +234,51 @@ export default function CompletePage() {
                 <p>"Desde ahora, las babosas tienen un aliado: {playerName.split(' ')[0]}"</p>
                 <p className="text-6xl mt-4">🐌</p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* El despertar - Harry como ingeniero */}
+        <div className="mb-8 relative w-full max-w-4xl mx-auto h-96 rounded-lg overflow-hidden shadow-2xl border-4 border-arcane-neon-blue">
+          <Image
+            src="/images/harrySalidaAlcantarilla.png"
+            alt="Harry despierta como ingeniero del futuro"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end justify-center p-8">
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-bold text-arcane-neon-green glow-text mb-2">
+                THE AWAKENING
+              </p>
+              <p className="text-xl text-gray-300">
+                Harry despertó en su tiempo... pero ya no era el mismo
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* El futuro que creó */}
+        <div className="mb-8 relative w-full max-w-4xl mx-auto h-96 rounded-lg overflow-hidden shadow-2xl border-4 border-arcane-neon-green">
+          <Image
+            src="/images/plazaPalomas.png"
+            alt="El futuro verde que Harry ayudó a crear"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex items-end justify-center p-8">
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-bold text-arcane-neon-green glow-text mb-2">
+                A NEW HOPE FOR THE PLANET
+              </p>
+              <p className="text-xl text-gray-300 mb-2">
+                Con su conocimiento, Harry dedicó su vida a las energías renovables
+              </p>
+              <p className="text-lg text-arcane-copper italic">
+                Y la humanidad nunca conoció ese futuro distópico...
+              </p>
             </div>
           </div>
         </div>

@@ -111,7 +111,7 @@ export default function CircuitPage() {
 
       setTimeout(() => {
         markSessionActive();
-        router.push('/game/recycle');
+        router.push('/game/wordsearch');
       }, 4000);
     }
   }, [correctConnections, applications.length, attempts, timer, isComplete, router]);

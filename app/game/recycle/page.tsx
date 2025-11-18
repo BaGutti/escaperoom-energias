@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { completeLevel, finishGame, isGameStarted, markSessionActive } from "@/lib/gameState";
 
 interface FallingItem {
@@ -461,6 +462,17 @@ export default function RecyclePage() {
           <p className="mb-1">🖱️ <strong>ARRASTRA</strong> los objetos que caen y <strong>SUÉLTALOS</strong> en el contenedor correcto</p>
           <p className="text-arcane-neon-green font-bold">🎯 Objetivo: ¡Sobrevive mínimo 2 minutos clasificando!</p>
           <p className="text-arcane-copper font-bold mt-1">👑 Desafío Experto: ¡Llega al nivel 8 para ser una leyenda!</p>
+        </div>
+
+        {/* Imagen de las 3Rs */}
+        <div className="mt-4 relative w-full max-w-md mx-auto h-48 rounded-lg overflow-hidden shadow-lg border-2 border-arcane-copper">
+          <Image
+            src="/images/las-3rs.png"
+            alt="Las 3Rs: Reducir, Reutilizar, Reciclar"
+            fill
+            className="object-contain"
+            unoptimized
+          />
         </div>
       </div>
     </div>

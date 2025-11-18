@@ -10,35 +10,35 @@ const storyParts = [
     id: 1,
     text: "Era un día como tantos otros, de esos en que el mes de junio viste de oro las hojas de los árboles...",
     subtext: "Harry caminaba distraído, sumido en sus pensamientos.",
-    image: null,
-    duration: 6000 // 6 segundos - introducción simple
+    image: "/images/harry-retrato.png",
+    duration: 7000 // 7 segundos - presentación del personaje
   },
   {
     id: 2,
     text: "¡TRAS! ¡CRAC! ¡CATAPLUM!",
     subtext: "Un tremendo estruendo sacudió el mundo bajo sus pies. El suelo se abrió cual boca hambrienta...",
-    image: null,
-    duration: 7000 // 7 segundos - texto más largo
+    image: "/images/clac.png",
+    duration: 9000 // 9 segundos - momento dramático con imagen
   },
   {
     id: 3,
     text: "Harry cayó por la alcantarilla",
     subtext: "Cuando tocó el suelo, no sintió dolor alguno. Alzó la vista y lo que vio le heló la sangre...",
-    image: "/images/harry-cayendo.png",
+    image: "/images/harry-cayendo-nuevo.png",
     duration: 9000 // 9 segundos - tiene imagen dramática
   },
   {
     id: 4,
     text: "Estaba en su ciudad, pero una ciudad que no era.",
     subtext: "Todo lucía un color de óxido y herrumbre, como si el tiempo mismo se hubiera oxidado junto con el mundo.",
-    image: "/images/ciudad-oxidada.png",
+    image: "/images/ciudad-deshabitada.png",
     duration: 9000 // 9 segundos - imagen + texto largo
   },
   {
     id: 5,
     text: "En la plaza donde solía alimentar palomas...",
     subtext: "Descubrió criaturas que jamás había contemplado: ¡Babosas luminosas reunidas en asamblea!",
-    image: "/images/babosas-luminosas.png",
+    image: "/images/babosas-en-la-plaza.png",
     duration: 9000 // 9 segundos - imagen importante + texto
   },
   {
@@ -157,16 +157,16 @@ export default function IntroPage() {
       <div className={`max-w-4xl mx-auto text-center z-10 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         {/* Imagen si existe */}
         {currentStory.image && (
-          <div className="mb-8 relative w-full h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-copper">
+          <div className="mb-8 relative w-full h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl border-2 border-arcane-copper bg-black">
             <Image
               src={currentStory.image}
               alt={currentStory.text}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-arcane-deep-purple/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-arcane-deep-purple/80 via-transparent to-transparent pointer-events-none" />
           </div>
         )}
 
