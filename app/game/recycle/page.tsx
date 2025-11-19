@@ -395,10 +395,10 @@ export default function RecyclePage() {
               draggable
               onDragStart={() => handleDragStart(item)}
               onDragEnd={handleDragEnd}
-              className={`absolute transition-all cursor-grab active:cursor-grabbing ${
+              className={`absolute transition-all cursor-grab active:cursor-grabbing touch-manipulation ${
                 draggedItem?.id === item.id
                   ? 'opacity-50 scale-110 z-50'
-                  : 'hover:scale-110 z-10'
+                  : 'hover:scale-110 active:scale-110 z-10'
               }`}
               style={{
                 left: `${item.x}%`,
@@ -406,14 +406,14 @@ export default function RecyclePage() {
                 transform: 'translate(-50%, -50%)'
               }}
             >
-              <div className={`bg-white rounded-lg p-3 shadow-2xl ${
+              <div className={`bg-white rounded-lg p-2 md:p-3 shadow-2xl min-w-[70px] md:min-w-[90px] ${
                 draggedItem?.id === item.id
-                  ? 'border-4 border-arcane-neon-blue'
-                  : 'border-4 border-arcane-neon-green hover:border-arcane-neon-blue'
+                  ? 'border-3 md:border-4 border-arcane-neon-blue'
+                  : 'border-3 md:border-4 border-arcane-neon-green hover:border-arcane-neon-blue active:border-arcane-neon-blue'
               }`}>
-                <div className="text-4xl">{item.icon}</div>
-                <div className="text-xs font-bold mt-1 text-black">{item.name}</div>
-                <div className="text-xs text-arcane-copper mt-1">
+                <div className="text-3xl md:text-4xl">{item.icon}</div>
+                <div className="text-[10px] md:text-xs font-bold mt-1 text-black">{item.name}</div>
+                <div className="text-[9px] md:text-xs text-arcane-copper mt-1">
                   {draggedItem?.id === item.id ? 'Arrastrando...' : 'Arrastra'}
                 </div>
               </div>
@@ -432,24 +432,24 @@ export default function RecyclePage() {
         </div>
 
         {/* Containers - Suelta aquí para clasificar */}
-        <div className="grid grid-cols-5 gap-2 mt-4">
+        <div className="grid grid-cols-5 gap-1 md:gap-2 mt-4">
           {containerCounts.map(container => (
             <div
               key={container.id}
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(container.type)}
-              className={`${container.color} rounded-lg p-4 text-center transition-all duration-300 ${
+              className={`${container.color} rounded-lg p-2 md:p-4 text-center transition-all duration-300 touch-manipulation min-h-[100px] md:min-h-[120px] ${
                 draggedItem
-                  ? 'border-4 border-arcane-neon-green scale-105 shadow-2xl shadow-arcane-neon-green/50'
+                  ? 'border-3 md:border-4 border-arcane-neon-green scale-105 shadow-2xl shadow-arcane-neon-green/50'
                   : 'border-2 border-white/30'
               }`}
             >
-              <div className="text-3xl mb-2">{container.icon}</div>
-              <div className="text-white font-bold text-sm">{container.name}</div>
-              <div className="text-white text-xs mt-1">Items: {container.count}</div>
+              <div className="text-2xl md:text-3xl mb-1 md:mb-2">{container.icon}</div>
+              <div className="text-white font-bold text-xs md:text-sm">{container.name}</div>
+              <div className="text-white text-[10px] md:text-xs mt-1">Items: {container.count}</div>
               {draggedItem && (
-                <div className="mt-2 text-xs text-white bg-black/50 rounded px-2 py-1 animate-bounce">
-                  ⬇️ Suelta aquí
+                <div className="mt-1 md:mt-2 text-[10px] md:text-xs text-white bg-black/50 rounded px-1 md:px-2 py-1 animate-bounce">
+                  ⬇️ Suelta
                 </div>
               )}
             </div>
@@ -457,7 +457,7 @@ export default function RecyclePage() {
         </div>
 
         {/* Instructions */}
-        <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-4 text-center text-sm text-gray-300">
+        <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-3 md:p-4 text-center text-xs md:text-sm text-gray-300">
           <p className="mb-2">💡 <strong>Cómo jugar:</strong></p>
           <p className="mb-1">🖱️ <strong>ARRASTRA</strong> los objetos que caen y <strong>SUÉLTALOS</strong> en el contenedor correcto</p>
           <p className="text-arcane-neon-green font-bold">🎯 Objetivo: ¡Sobrevive mínimo 2 minutos clasificando!</p>
@@ -465,7 +465,7 @@ export default function RecyclePage() {
         </div>
 
         {/* Imagen de las 3Rs */}
-        <div className="mt-4 relative w-full max-w-md mx-auto h-48 rounded-lg overflow-hidden shadow-lg border-2 border-arcane-copper">
+        <div className="mt-4 relative w-full max-w-md mx-auto h-36 md:h-48 rounded-lg overflow-hidden shadow-lg border-2 border-arcane-copper bg-black">
           <Image
             src="/images/las-3rs.png"
             alt="Las 3Rs: Reducir, Reutilizar, Reciclar"

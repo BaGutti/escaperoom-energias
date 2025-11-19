@@ -227,9 +227,9 @@ export default function QuizPage() {
                 key={index}
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showFeedback}
-                className={`p-6 rounded-lg border-2 transition-all duration-300 ${getOptionColor(index)} ${
-                  !showFeedback ? 'hover:scale-105 cursor-pointer' : 'cursor-not-allowed'
-                }`}
+                className={`p-4 md:p-6 rounded-lg border-2 transition-all duration-300 ${getOptionColor(index)} ${
+                  !showFeedback ? 'hover:scale-105 cursor-pointer active:scale-95' : 'cursor-not-allowed'
+                } touch-manipulation min-h-[60px]`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl font-bold text-arcane-neon-green">

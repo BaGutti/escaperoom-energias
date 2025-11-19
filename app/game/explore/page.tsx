@@ -20,9 +20,9 @@ const objects: ClickableObject[] = [
     id: "sol",
     name: "El Sol Radiante",
     description: "Un antiguo panel solar oxidado. Las babosas hablan del 'padre generoso' que brilla cada día...",
-    x: 75,
+    x: 70,
     y: 15,
-    size: 60,
+    size: 80,
     found: false,
     energyType: "solar"
   },
@@ -30,9 +30,9 @@ const objects: ClickableObject[] = [
     id: "molino",
     name: "Molino Olvidado",
     description: "Un molino de viento roto. Las babosas lo llaman 'el danzarín invisible'...",
-    x: 25,
-    y: 25,
-    size: 70,
+    x: 15,
+    y: 20,
+    size: 85,
     found: false,
     energyType: "eolica"
   },
@@ -40,9 +40,9 @@ const objects: ClickableObject[] = [
     id: "rio",
     name: "Río Seco",
     description: "Las marcas de un antiguo río. Las 'venas del mundo' que alguna vez fluyeron con fuerza...",
-    x: 50,
-    y: 70,
-    size: 50,
+    x: 45,
+    y: 65,
+    size: 70,
     found: false,
     energyType: "hidraulica"
   },
@@ -50,9 +50,9 @@ const objects: ClickableObject[] = [
     id: "geiser",
     name: "Grieta Humeante",
     description: "Vapor emergiendo del suelo. El 'fuego interno de la Tierra' aún late...",
-    x: 15,
-    y: 60,
-    size: 45,
+    x: 10,
+    y: 55,
+    size: 65,
     found: false,
     energyType: "geotermica"
   },
@@ -60,9 +60,9 @@ const objects: ClickableObject[] = [
     id: "plantas",
     name: "Restos Vegetales",
     description: "Plantas secas acumuladas. 'Lo que nace, muere y renace como fuerza'...",
-    x: 65,
-    y: 55,
-    size: 50,
+    x: 60,
+    y: 45,
+    size: 70,
     found: false,
     energyType: "biomasa"
   },
@@ -70,9 +70,9 @@ const objects: ClickableObject[] = [
     id: "oceano",
     name: "Costa Árida",
     description: "Marcas de olas antiguas. El 'corazón pulsante del océano' dormido...",
-    x: 85,
-    y: 65,
-    size: 55,
+    x: 75,
+    y: 60,
+    size: 75,
     found: false,
     energyType: "undimotriz"
   },
@@ -80,9 +80,9 @@ const objects: ClickableObject[] = [
     id: "basura",
     name: "Montículo Orgánico",
     description: "Desechos en descomposición. 'El gas mágico del tesoro oculto'...",
-    x: 40,
-    y: 40,
-    size: 45,
+    x: 35,
+    y: 35,
+    size: 65,
     found: false,
     energyType: "biogas"
   }
@@ -251,12 +251,14 @@ export default function ExplorePage() {
                 className={`absolute transition-all duration-300 group ${
                   item.found
                     ? 'opacity-20 cursor-not-allowed'
-                    : 'opacity-60 hover:opacity-100 cursor-pointer'
-                }`}
+                    : 'opacity-80 hover:opacity-100 cursor-pointer hover:scale-110'
+                } touch-manipulation`}
                 style={{
                   left: `${item.x}%`,
                   top: `${item.y}%`,
                   width: `${item.size}px`,
+                  minWidth: `${item.size}px`,
+                  minHeight: `${item.size}px`,
                   height: `${item.size}px`,
                   transform: 'translate(-50%, -50%)'
                 }}

@@ -215,31 +215,31 @@ export default function CircuitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-arcane-deep-purple via-arcane-dark-purple to-black p-8">
+    <div className="min-h-screen bg-gradient-to-b from-arcane-deep-purple via-arcane-dark-purple to-black p-4 md:p-8">
       {/* HUD */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <div className="flex justify-between items-center mb-4">
+      <div className="max-w-6xl mx-auto mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-arcane-neon-green glow-text">
+            <h1 className="text-2xl md:text-3xl font-bold text-arcane-neon-green glow-text">
               Construye el Circuito Energético
             </h1>
-            <p className="text-gray-400">Arrastra las energías a sus aplicaciones correctas</p>
+            <p className="text-sm md:text-base text-gray-400">Arrastra las energías a sus aplicaciones correctas</p>
           </div>
 
-          <div className="flex gap-6">
-            <div className="text-right">
-              <p className="text-sm text-gray-400">Conexiones</p>
-              <p className="text-2xl font-bold text-arcane-neon-green">
+          <div className="flex gap-4 md:gap-6 w-full md:w-auto">
+            <div className="text-center flex-1 md:flex-none">
+              <p className="text-xs md:text-sm text-gray-400">Conexiones</p>
+              <p className="text-xl md:text-2xl font-bold text-arcane-neon-green">
                 {correctConnections} / {applications.length}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-400">Intentos</p>
-              <p className="text-2xl font-bold text-arcane-copper">{attempts}</p>
+            <div className="text-center flex-1 md:flex-none">
+              <p className="text-xs md:text-sm text-gray-400">Intentos</p>
+              <p className="text-xl md:text-2xl font-bold text-arcane-copper">{attempts}</p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-400">Tiempo</p>
-              <p className="text-2xl font-bold text-arcane-neon-blue">{formatTime(timer)}</p>
+            <div className="text-center flex-1 md:flex-none">
+              <p className="text-xs md:text-sm text-gray-400">Tiempo</p>
+              <p className="text-xl md:text-2xl font-bold text-arcane-neon-blue">{formatTime(timer)}</p>
             </div>
           </div>
         </div>
@@ -272,13 +272,13 @@ export default function CircuitPage() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Fuentes de Energía */}
           <div>
-            <h2 className="text-2xl font-bold text-arcane-copper mb-4">
+            <h2 className="text-xl md:text-2xl font-bold text-arcane-copper mb-4">
               ⚡ Fuentes de Energía
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {energySources.map(energy => (
                 <DraggableEnergy key={energy.id} energy={energy} />
               ))}
@@ -286,7 +286,7 @@ export default function CircuitPage() {
 
             <button
               onClick={handleReset}
-              className="mt-6 w-full px-4 py-3 bg-arcane-rust/50 hover:bg-arcane-rust text-white rounded-lg transition-all border-2 border-arcane-copper"
+              className="mt-6 w-full px-4 py-3 bg-arcane-rust/50 hover:bg-arcane-rust active:scale-95 text-white rounded-lg transition-all border-2 border-arcane-copper touch-manipulation min-h-[60px]"
             >
               🔄 Reiniciar Circuito
             </button>
@@ -294,10 +294,10 @@ export default function CircuitPage() {
 
           {/* Aplicaciones */}
           <div>
-            <h2 className="text-2xl font-bold text-arcane-neon-blue mb-4">
+            <h2 className="text-xl md:text-2xl font-bold text-arcane-neon-blue mb-4">
               🔌 Aplicaciones
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {applications.map(app => (
                 <DroppableApplication key={app.id} application={app} />
               ))}
@@ -344,13 +344,13 @@ function DraggableEnergy({ energy }: { energy: EnergySource }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`px-6 py-4 bg-arcane-deep-purple border-2 border-arcane-copper rounded-lg cursor-grab active:cursor-grabbing hover:bg-arcane-copper/20 transition-all ${
+      className={`px-4 md:px-6 py-3 md:py-4 bg-arcane-deep-purple border-2 border-arcane-copper rounded-lg cursor-grab active:cursor-grabbing hover:bg-arcane-copper/20 transition-all touch-manipulation min-h-[60px] ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-3xl">{energy.icon}</span>
-        <span className="text-white font-semibold">{energy.name}</span>
+        <span className="text-2xl md:text-3xl">{energy.icon}</span>
+        <span className="text-white font-semibold text-sm md:text-base">{energy.name}</span>
       </div>
     </div>
   );
@@ -366,7 +366,7 @@ function DroppableApplication({ application }: { application: Application }) {
   return (
     <div
       ref={setNodeRef}
-      className={`px-6 py-4 border-2 rounded-lg transition-all ${
+      className={`px-4 md:px-6 py-3 md:py-4 border-2 rounded-lg transition-all min-h-[60px] ${
         application.connected
           ? 'bg-green-600/30 border-green-400 glow-border'
           : isOver
@@ -376,11 +376,11 @@ function DroppableApplication({ application }: { application: Application }) {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{application.icon}</span>
-          <span className="text-white font-semibold">{application.name}</span>
+          <span className="text-2xl md:text-3xl">{application.icon}</span>
+          <span className="text-white font-semibold text-sm md:text-base">{application.name}</span>
         </div>
         {application.connected && (
-          <span className="text-2xl text-green-400">✓</span>
+          <span className="text-xl md:text-2xl text-green-400">✓</span>
         )}
       </div>
     </div>

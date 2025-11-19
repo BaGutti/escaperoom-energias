@@ -264,48 +264,61 @@ export default function WordSearchPage() {
     <div className="min-h-screen bg-gradient-to-b from-arcane-deep-purple to-black p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* HUD */}
-        <div className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-arcane-neon-green">🔍 Sopa de Letras Telepática</h2>
-            <p className="text-sm text-gray-400">Encuentra las palabras sobre energías renovables</p>
+        <div className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-4 mb-6">
+          <div className="mb-3">
+            <h2 className="text-xl md:text-2xl font-bold text-arcane-neon-green">🔍 Sopa de Letras Telepática</h2>
+            <p className="text-xs md:text-sm text-gray-400">Encuentra las palabras sobre energías renovables</p>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-4 md:gap-6 justify-around md:justify-end">
             <div className="text-center">
-              <p className="text-sm text-gray-400">Tiempo</p>
-              <p className="text-xl font-bold text-arcane-neon-blue">{formatTime(timer)}</p>
+              <p className="text-xs md:text-sm text-gray-400">Tiempo</p>
+              <p className="text-lg md:text-xl font-bold text-arcane-neon-blue">{formatTime(timer)}</p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400">Puntos</p>
-              <p className="text-xl font-bold text-arcane-neon-green">{score}</p>
+              <p className="text-xs md:text-sm text-gray-400">Puntos</p>
+              <p className="text-lg md:text-xl font-bold text-arcane-neon-green">{score}</p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400">Palabras</p>
-              <p className="text-xl font-bold text-arcane-copper">{foundWords.length}/{words.length}</p>
+              <p className="text-xs md:text-sm text-gray-400">Palabras</p>
+              <p className="text-lg md:text-xl font-bold text-arcane-copper">{foundWords.length}/{words.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Sopa de letras */}
           <div className="lg:col-span-2">
             <div
-              className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-6 select-none"
+              className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-3 md:p-6 select-none touch-manipulation"
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}>
+              <div className="grid gap-0.5 md:gap-1" style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}>
                 {grid.map((row, i) =>
                   row.map((letter, j) => (
                     <div
                       key={`${i}-${j}`}
                       onMouseDown={() => handleCellMouseDown(i, j)}
                       onMouseEnter={() => handleCellMouseEnter(i, j)}
+                      onTouchStart={() => handleCellMouseDown(i, j)}
+                      onTouchMove={(e) => {
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.getAttribute('data-row')) {
+                          const row = parseInt(element.getAttribute('data-row') || '0');
+                          const col = parseInt(element.getAttribute('data-col') || '0');
+                          handleCellMouseEnter(row, col);
+                        }
+                      }}
+                      onTouchEnd={handleMouseUp}
+                      data-row={i}
+                      data-col={j}
                       className={`
-                        aspect-square flex items-center justify-center text-xs md:text-sm font-bold
-                        border border-arcane-copper/30 rounded cursor-pointer transition-all
+                        aspect-square flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-bold
+                        border border-arcane-copper/30 rounded cursor-pointer transition-all touch-manipulation
                         ${isCellInFoundWord(i, j) ? 'bg-arcane-neon-green text-black' : 'bg-arcane-deep-purple text-white'}
                         ${isCellSelected(i, j) ? 'bg-arcane-neon-blue text-black scale-110' : ''}
-                        hover:bg-arcane-copper/20
+                        hover:bg-arcane-copper/20 active:bg-arcane-copper/30
                       `}
                     >
                       {letter}
@@ -315,28 +328,28 @@ export default function WordSearchPage() {
               </div>
             </div>
 
-            <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-4 text-center text-sm text-gray-300">
+            <div className="mt-4 bg-arcane-deep-purple/50 rounded-lg p-3 md:p-4 text-center text-xs md:text-sm text-gray-300">
               <p className="mb-2">💡 <strong>Cómo jugar:</strong></p>
-              <p>Arrastra el mouse sobre las letras para formar palabras (horizontal, vertical o diagonal)</p>
+              <p>Arrastra sobre las letras para formar palabras (horizontal, vertical o diagonal)</p>
             </div>
           </div>
 
           {/* Lista de palabras */}
-          <div className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-6">
-            <h3 className="text-xl font-bold text-arcane-neon-green mb-4">Palabras a Encontrar:</h3>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="bg-arcane-dark-purple border-2 border-arcane-copper rounded-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold text-arcane-neon-green mb-4">Palabras a Encontrar:</h3>
+            <div className="space-y-2 max-h-[400px] md:max-h-96 overflow-y-auto">
               {words.map((w, idx) => (
                 <div
                   key={idx}
                   className={`
-                    p-2 rounded border-2 transition-all
+                    p-2 md:p-3 rounded border-2 transition-all
                     ${w.found
                       ? 'bg-arcane-neon-green text-black border-arcane-neon-green line-through'
                       : 'bg-arcane-deep-purple text-white border-arcane-copper/50'
                     }
                   `}
                 >
-                  <p className="font-bold">{w.word}</p>
+                  <p className="font-bold text-sm md:text-base">{w.word}</p>
                   <p className="text-xs opacity-70">{w.word.length} letras</p>
                 </div>
               ))}
