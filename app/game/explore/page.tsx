@@ -21,7 +21,7 @@ const objects: ClickableObject[] = [
     name: "El Sol Radiante",
     description: "Un antiguo panel solar oxidado. Las babosas hablan del 'padre generoso' que brilla cada día...",
     x: 70,
-    y: 15,
+    y: 25, // Bajado de 15 a 25 para evitar que el navbar lo tape
     size: 80,
     found: false,
     energyType: "solar"
@@ -31,7 +31,7 @@ const objects: ClickableObject[] = [
     name: "Molino Olvidado",
     description: "Un molino de viento roto. Las babosas lo llaman 'el danzarín invisible'...",
     x: 15,
-    y: 20,
+    y: 30, // Bajado de 20 a 30 para evitar que el navbar lo tape
     size: 85,
     found: false,
     energyType: "eolica"
